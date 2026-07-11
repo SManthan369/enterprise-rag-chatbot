@@ -1,28 +1,60 @@
+import os
+
 from src.loader import load_pdf
 from src.splitter import split_documents
 from src.embeddings import get_embedding_model
 from src.vectorstore import create_vector_store
 
 
-def create_index(pdf_path):
+def create_index(folder_path):
 
-    print("Loading document...")
+    all_documents = []
 
-    documents = load_pdf(pdf_path)
 
-    print("Splitting document...")
+    for file in os.listdir(folder_path):
 
-    chunks = split_documents(documents)
+        if file.lower().endswith(".pdf"):
 
-    print("Creating embeddings...")
+            pdf_path = os.path.join(
+                folder_path,
+                file
+            )
+
+            print(f"Loading: {pdf_path}")
+
+
+            documents = load_pdf(
+                pdf_path
+            )
+
+
+            all_documents.extend(
+                documents
+            )
+
+
+    print(
+        f"Total documents loaded: {len(all_documents)}"
+    )
+
+
+    chunks = split_documents(
+        all_documents
+    )
+
+
+    print(
+        f"Total chunks created: {len(chunks)}"
+    )
+
 
     embeddings = get_embedding_model()
 
-    print("Creating FAISS index...")
 
-    db = create_vector_store(
+    vectorstore = create_vector_store(
         chunks,
         embeddings
     )
 
-    return db
+
+    return vectorstore

@@ -1,22 +1,18 @@
-from pathlib import Path
 from langchain_community.document_loaders import PyPDFLoader
+import os
 
 
 def load_pdf(file_path):
 
-    pdf = Path(file_path)
-
-    if not pdf.exists():
+    if not os.path.exists(file_path):
         raise FileNotFoundError(
             f"PDF not found: {file_path}"
         )
 
-    if pdf.stat().st_size == 0:
-        raise ValueError(
-            f"PDF is empty: {file_path}"
-        )
 
-    loader = PyPDFLoader(file_path)
+    loader = PyPDFLoader(
+        file_path
+    )
 
     documents = loader.load()
 

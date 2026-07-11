@@ -8,6 +8,7 @@ from src.indexer import create_index
 # ------------------------------
 # Page Configuration
 # ------------------------------
+
 st.set_page_config(
     page_title="Enterprise AI Document Assistant",
     page_icon="🤖",
@@ -16,8 +17,9 @@ st.set_page_config(
 
 
 st.title("🤖 Enterprise AI Document Assistant")
+
 st.caption(
-    "Upload documents and ask questions using Retrieval-Augmented Generation"
+    "Upload multiple documents and ask questions using Retrieval-Augmented Generation"
 )
 
 
@@ -28,32 +30,40 @@ st.caption(
 st.sidebar.header("📄 Document Upload")
 
 
-uploaded_file = st.sidebar.file_uploader(
-    "Upload a PDF",
-    type=["pdf"]
+uploaded_files = st.sidebar.file_uploader(
+    "Upload PDF documents",
+    type=["pdf"],
+    accept_multiple_files=True
 )
 
 
-if uploaded_file:
+if uploaded_files:
+
+    upload_folder = "data/uploads"
 
     os.makedirs(
-        "data/uploads",
+        upload_folder,
         exist_ok=True
     )
 
-    file_path = (
-        f"data/uploads/{uploaded_file.name}"
-    )
 
+    for uploaded_file in uploaded_files:
 
-    with open(file_path, "wb") as f:
-        f.write(
-            uploaded_file.getbuffer()
+        file_path = os.path.join(
+            upload_folder,
+            uploaded_file.name
         )
 
 
+        with open(file_path, "wb") as f:
+
+            f.write(
+                uploaded_file.getbuffer()
+            )
+
+
     st.sidebar.success(
-        "PDF uploaded successfully"
+        f"{len(uploaded_files)} PDF(s) uploaded successfully"
     )
 
 
@@ -61,19 +71,24 @@ if uploaded_file:
         "Create Knowledge Base"
     ):
 
+
         with st.spinner(
-            "Processing document..."
+            "Processing documents and creating embeddings..."
         ):
 
-            create_index(file_path)
+
+            create_index(
+                upload_folder
+            )
 
 
         # Reload chatbot with new FAISS index
+
         st.session_state.bot = RAGChatbot()
 
 
         st.sidebar.success(
-            "Document indexed successfully!"
+            "Knowledge base created successfully!"
         )
 
 
@@ -84,9 +99,11 @@ if uploaded_file:
 
 if "bot" not in st.session_state:
 
+
     with st.spinner(
         "Loading AI Assistant..."
     ):
+
 
         st.session_state.bot = RAGChatbot()
 
@@ -108,9 +125,11 @@ if "messages" not in st.session_state:
 
 for message in st.session_state.messages:
 
+
     with st.chat_message(
         message["role"]
     ):
+
 
         st.markdown(
             message["content"]
@@ -122,16 +141,20 @@ for message in st.session_state.messages:
             and "sources" in message
         ):
 
+
             with st.expander(
                 "📄 View Sources"
             ):
 
+
                 for doc in message["sources"]:
+
 
                     page = (
                         doc.metadata.get("page", 0)
                         + 1
                     )
+
 
                     source = doc.metadata.get(
                         "source",
@@ -143,9 +166,11 @@ for message in st.session_state.messages:
                         f"**📄 File:** `{source}`"
                     )
 
+
                     st.markdown(
                         f"**📑 Page:** {page}"
                     )
+
 
                     st.info(
                         doc.page_content[:250]
@@ -163,10 +188,9 @@ question = st.chat_input(
 )
 
 
+
 if question:
 
-
-    # User message
 
     st.session_state.messages.append(
         {
@@ -186,8 +210,6 @@ if question:
 
 
 
-    # AI Response
-
     with st.chat_message(
         "assistant"
     ):
@@ -196,6 +218,7 @@ if question:
         with st.spinner(
             "Searching documents..."
         ):
+
 
             answer, docs = (
                 st.session_state.bot.ask(
@@ -207,7 +230,6 @@ if question:
         st.markdown(
             answer
         )
-
 
 
         with st.expander(
@@ -223,6 +245,7 @@ if question:
                     + 1
                 )
 
+
                 source = doc.metadata.get(
                     "source",
                     "Unknown"
@@ -232,6 +255,7 @@ if question:
                 st.markdown(
                     f"**📄 File:** `{source}`"
                 )
+
 
                 st.markdown(
                     f"**📑 Page:** {page}"
@@ -244,8 +268,6 @@ if question:
                 )
 
 
-
-    # Save AI message
 
     st.session_state.messages.append(
         {
