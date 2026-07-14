@@ -36,3 +36,27 @@ build/
 
 # Misc
 *.sqlite3
+
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# Environment
+.env
+
+# FAISS
+faiss_index/
+
+# Uploaded files
+data/uploads/
+
+# Streamlit cache
+.streamlit/
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db

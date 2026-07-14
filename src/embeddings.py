@@ -1,10 +1,8 @@
-from langchain_community.embeddings import HuggingFaceEmbeddings
-
+import os
+from langchain_ollama import OllamaEmbeddings
 
 def get_embedding_model():
-
-    embeddings = HuggingFaceEmbeddings(
-        model_name="sentence-transformers/all-MiniLM-L6-v2"
+    return OllamaEmbeddings(
+        model="nomic-embed-text",
+        base_url=os.getenv("OLLAMA_HOST", "http://localhost:11434")
     )
-
-    return embeddings

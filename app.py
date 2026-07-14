@@ -37,60 +37,24 @@ uploaded_files = st.sidebar.file_uploader(
 )
 
 
-if uploaded_files:
+if st.sidebar.button("Create Knowledge Base"):
 
     upload_folder = "data/uploads"
+    os.makedirs(upload_folder, exist_ok=True)
 
-    os.makedirs(
-        upload_folder,
-        exist_ok=True
-    )
+    if uploaded_files:
+        for uploaded_file in uploaded_files:
+            file_path = os.path.join(upload_folder, uploaded_file.name)
 
+            with open(file_path, "wb") as f:
+                f.write(uploaded_file.getbuffer())
 
-    for uploaded_file in uploaded_files:
+    with st.spinner("Processing documents and creating embeddings..."):
+        create_index(upload_folder)
 
-        file_path = os.path.join(
-            upload_folder,
-            uploaded_file.name
-        )
+    st.session_state.bot = RAGChatbot()
 
-
-        with open(file_path, "wb") as f:
-
-            f.write(
-                uploaded_file.getbuffer()
-            )
-
-
-    st.sidebar.success(
-        f"{len(uploaded_files)} PDF(s) uploaded successfully"
-    )
-
-
-    if st.sidebar.button(
-        "Create Knowledge Base"
-    ):
-
-
-        with st.spinner(
-            "Processing documents and creating embeddings..."
-        ):
-
-
-            create_index(
-                upload_folder
-            )
-
-
-        # Reload chatbot with new FAISS index
-
-        st.session_state.bot = RAGChatbot()
-
-
-        st.sidebar.success(
-            "Knowledge base created successfully!"
-        )
-
+    st.sidebar.success("Knowledge base created successfully!")
 
 
 # ------------------------------

@@ -58,3 +58,5 @@ def create_index(folder_path):
 
 
     return vectorstore
+if __name__ == "__main__":
+    create_index("data")
