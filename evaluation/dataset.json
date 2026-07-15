@@ -1,0 +1,14 @@
+[
+  {
+    "question": "What is chatbots?",
+    "ground_truth": "A chatbot is a software application that cn simulate human conversation through text chats or voice commands "
+  },
+  {
+    "question": "What is applicatio of chatbots?",
+    "ground_truth": "custmorer service , e commerece , healthcare, education ,travel and hospitality "
+  },
+  {
+    "question": "What is Deep Learning?",
+    "ground_truth": "Deep Learning uses neural networks with multiple layers."
+  }
+]
