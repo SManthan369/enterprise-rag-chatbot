@@ -1,8 +1,18 @@
 import os
-from langchain_ollama import OllamaLLM
+
+from dotenv import load_dotenv
+from langchain_groq import ChatGroq
+
+load_dotenv()
+
 
 def get_llm():
-    return OllamaLLM(
-        model="gemma2:2b",
-        base_url=os.getenv("OLLAMA_HOST", "http://localhost:11434")
+
+    return ChatGroq(
+        api_key=os.getenv("GROQ_API_KEY"),
+        model=os.getenv(
+            "GROQ_MODEL",
+            "llama-3.1-8b-instant"
+        ),
+        temperature=0
     )

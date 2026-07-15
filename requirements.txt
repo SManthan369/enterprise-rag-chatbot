@@ -12,3 +12,4 @@ pypdf
 
 ollama
 streamlit
+langchain-groq
