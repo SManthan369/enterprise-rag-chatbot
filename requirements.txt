@@ -5,9 +5,9 @@ python-multipart
 langchain
 langchain-community
 langchain-core
-
+langsmith
 langchain-groq
-langchain-google-genai
+
 
 faiss-cpu
 pypdf

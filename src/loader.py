@@ -1,4 +1,4 @@
-from langchain_community.document_loaders import PyPDFLoader
+from langchain_community.document_loaders import PyMuPDFLoader
 import os
 
 
@@ -9,10 +9,7 @@ def load_pdf(file_path):
             f"PDF not found: {file_path}"
         )
 
-
-    loader = PyPDFLoader(
-        file_path
-    )
+    loader = PyMuPDFLoader(file_path)
 
     documents = loader.load()
 
